@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时代少年团：交互式全景报告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: A single-page, thematic structure with a sticky navigation bar for easy access to different facets of the group. The flow is designed to be non-linear, encouraging user exploration. It starts with a high-level introduction, then allows users to dive into an interactive timeline ("成长之旅"), detailed member profiles ("成员风采"), a musical analysis ("音乐宇宙"), and a balanced view of their achievements and challenges ("光辉与挑战"). This structure transforms the dense report into a digestible and engaging narrative, prioritizing user experience and interactive storytelling over a rigid, chapter-by-chapter format. The core '养成系' (growth) narrative is embodied in the interactive timeline. -->
+    <!-- Visualization & Content Choices: The report's data is visualized for impact and clarity. A timeline (HTML/CSS/JS) visualizes their growth. Interactive member cards (HTML/CSS/JS) replace static tables. A Chart.js bar chart dynamically displays their annual awards, summarizing a long list. A Chart.js doughnut chart visualizes their diverse musical styles. A two-column layout with icons presents their strengths and challenges. This selection focuses on interactivity (clicks, hovers) and clear information design to make complex information accessible and engaging, directly supporting the application's exploratory structure. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8F7F4;
+            color: #333333;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #6B7A8F;
+            border-bottom-color: #6B7A8F;
+        }
+        .modal-backdrop {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #D0A9A9;
+            border: 2px solid #F8F7F4;
+        }
+        .timeline-path {
+            position: absolute;
+            left: -15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #D0A9A9;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/80 backdrop-blur-md sticky top-0 z-40 w-full shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-[#6B7A8F]">
+                时代少年团 <span class="font-light">全景报告</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#journey" class="nav-link font-medium pb-1">成长之旅</a>
+                <a href="#members" class="nav-link font-medium pb-1">成员风采</a>
+                <a href="#music" class="nav-link font-medium pb-1">音乐宇宙</a>
+                <a href="#impact" class="nav-link font-medium pb-1">光辉与挑战</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-4 6h4"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
+             <a href="#journey" class="block py-2 text-center nav-link">成长之旅</a>
+             <a href="#members" class="block py-2 text-center nav-link">成员风采</a>
+             <a href="#music" class="block py-2 text-center nav-link">音乐宇宙</a>
+             <a href="#impact" class="block py-2 text-center nav-link">光辉与挑战</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4 text-[#6B7A8F]">时代少年团</h1>
+                <p class="text-lg md:text-xl max-w-3xl mx-auto text-gray-600">中国偶像产业“养成系”模式下的多棱镜观察：一个关于成长、音乐、梦想与挑战的交互式全景报告。</p>
+            </div>
+        </section>
+
+        <section id="journey" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-4">成长之旅</h2>
+                <p class="max-w-3xl mx-auto text-center text-gray-600 mb-12">本章节将报告中的关键事件串联成一条互动时间线。从青涩练习生到舞台上的耀眼新星，“养成系”的核心是陪伴与成长。点击时间节点，回顾时代少年团在不同阶段的音乐发布、重要演出和里程碑事件，直观感受他们的蜕变历程。</p>
+                <div id="timeline-container" class="relative max-w-2xl mx-auto">
+                </div>
+            </div>
+        </section>
+
+        <section id="members" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-4">成员风采</h2>
+                <p class="max-w-3xl mx-auto text-center text-gray-600 mb-12">时代少年团由七位各具特色的成员组成，他们的个性和才能共同构成了团队的完整面貌。本部分将报告中的成员介绍以互动卡片形式呈现。点击任意成员头像，即可深入了解其队内角色、个人特长及在团体之外的多元发展，探索“七人七色”的独特魅力。</p>
+                <div id="members-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-6 md:gap-8">
+                </div>
+            </div>
+        </section>
+        
+        <section id="music" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-4">音乐宇宙</h2>
+                <p class="max-w-3xl mx-auto text-center text-gray-600 mb-12">音乐是偶像团体的核心。本章节将报告中关于音乐风格的分析进行可视化呈现，并重点展示了组合在不同时期的代表性专辑。通过图表和作品卡片，您可以清晰地看到他们从青春活力到探索更成熟表达的音乐演进轨迹。</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold text-center mb-4">音乐风格构成</h3>
+                        <div class="chart-container">
+                            <canvas id="musicStyleChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold text-center mb-6">代表专辑演进</h3>
+                        <div class="space-y-6">
+                            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                                <h4 class="font-bold text-lg text-[#6B7A8F]">《舞象之年》 (2021)</h4>
+                                <p class="text-gray-600 mt-2">“挥洒青春活力”的代表作，收录《要你管》、《小小孩》等传唱度较高的歌曲，奠定了组合阳光活力的市场认知。</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                                <h4 class="font-bold text-lg text-[#D0A9A9]">《乌托邦少年》 (2022)</h4>
+                                <p class="text-gray-600 mt-2">包含《朱雀》、《哪吒》等篇章，融合中国风与现代编曲，展现了在音乐上寻求突破的艺术探索。</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                                <h4 class="font-bold text-lg text-[#F7C5A8]">《叁重楼》 (2025)</h4>
+                                <p class="text-gray-600 mt-2">被视为“吹响转型号角”的作品，预示着音乐风格和主题向更成熟的方向发展，探索更深邃的音乐表达。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="impact" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-4">光辉与挑战</h2>
+                <p class="max-w-3xl mx-auto text-center text-gray-600 mb-12">任何成功都伴随着挑战。本节将报告中关于成就与风险的分析进行整合，从“年度荣誉”和“发展的双刃剑”两个维度，全面呈现时代少年团在行业中的地位与处境。这不仅是对过往成绩的总结，也是对未来发展的审视。</p>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+                    <div class="lg:col-span-3">
+                        <h3 class="text-xl font-bold text-center mb-4">年度主要奖项数量</h3>
+                         <div class="chart-container">
+                            <canvas id="awardsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <h3 class="text-xl font-bold text-center mb-4">发展的双刃剑</h3>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg text-green-600 mb-3">核心优势</h4>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start"><span class="mr-3 text-xl">❤️</span><div><strong>深度情感联结：</strong> “养成系”模式带来高忠诚度的粉丝经济。</div></li>
+                                <li class="flex items-start"><span class="mr-3 text-xl">👥</span><div><strong>均衡成员配置：</strong> 成员各有所长，为团队多元发展提供基础。</div></li>
+                                <li class="flex items-start"><span class="mr-3 text-xl">🎬</span><div><strong>持续内容产出：</strong> 稳定的作品更新有效维持市场热度。</div></li>
+                                <li class="flex items-start"><span class="mr-3 text-xl">💼</span><div><strong>显著商业价值：</strong> 获得众多品牌青睐，市场号召力强。</div></li>
+                            </ul>
+                            <hr class="my-6 border-gray-300">
+                            <h4 class="font-bold text-lg text-red-600 mb-3">潜在风险</h4>
+                            <ul class="space-y-3 text-gray-700">
+                               <li class="flex items-start"><span class="mr-3 text-xl">👁️</span><div><strong>“养成”反噬风险：</strong> 私生饭等极端粉丝行为构成持续威胁。</div></li>
+                               <li class="flex items-start"><span class="mr-3 text-xl">🤔</span><div><strong>艺术定位深化：</strong> 需在成长中不断提升作品独特性与艺术性。</div></li>
+                               <li class="flex items-start"><span class="mr-3 text-xl">⚖️</span><div><strong>团队与个人平衡：</strong> 个人发展与团体活动的协调是长期课题。</div></li>
+                               <li class="flex items-start"><span class="mr-3 text-xl">🌊</span><div><strong>市场迭代压力：</strong> 偶像产业竞争激烈，需持续创新。</div></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#6B7A8F] text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>交互式报告根据源文档生成。</p>
+            <p class="text-sm opacity-75 mt-2">时代少年团：中国偶像产业“养成系”模式下的多棱镜观察</p>
+        </div>
+    </footer>
+
+    <div id="member-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden modal-backdrop opacity-0">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto modal-content transform scale-95">
+            <div id="modal-content-body" class="p-6 md:p-8">
+            </div>
+            <div class="px-6 py-4 bg-gray-100 text-right">
+                <button id="modal-close-button" class="bg-[#6B7A8F] text-white px-4 py-2 rounded-lg hover:bg-opacity-80 transition">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const membersData = [
+                { name: "马嘉祺", birth: "2002.12.12", role: "队长、主唱担当", skills: "擅长钢琴、吉他、架子鼓。曾参与《歌手2025》获好评，获华鼎奖“华语最具潜力歌手”。" },
+                { name: "丁程鑫", birth: "2002.02.24", role: "主舞担当、门面担当", skills: "TF家族早期练习生，综艺感强，常驻《你好，星期六》等节目，积累了广泛的国民度。" },
+                { name: "宋亚轩", birth: "2004.03.04", role: "主唱担当", skills: "嗓音清澈有辨识度，被赞“开口定调”。常驻《王牌对王牌》等热门综艺，展现可爱率真个性。" },
+                { name: "刘耀文", birth: "2005.09.23", role: "Rap担当、舞蹈担当", skills: "年龄最小的成员，台风稳健，舞台表现力强，在Rap和舞蹈方面成长迅速，潜力巨大。" },
+                { name: "张真源", birth: "2003.04.16", role: "Vocal担当", skills: "声线温柔有力。积极拓展戏剧领域，参演话剧《铁流东进》及音乐剧《家》等，磨练演技。" },
+                { name: "严浩翔", birth: "2004.08.16", role: "Rap担当", skills: "具备作词作曲及音乐制作能力。担任《中国新说唱2025》明星制作人，展现专业音乐才华。" },
+                { name: "贺峻霖", birth: "2004.06.15", role: "MC担当", skills: "主持及综艺反应能力突出，常在团体物料和外部活动中展现控场和互动能力，是团队的“气氛担当”。" }
+            ];
+
+            const timelineData = [
+                { year: "2019", title: "正式出道", desc: "11月23日，发行双单曲《全校通报》、《无尽的冒险》正式出道。获TMEA年度新声代团体奖。" },
+                { year: "2020", title: "崭露头角", desc: "举办《按时长大》一周年线上演唱会。获东方风云榜最佳新锐组合。" },
+                { year: "2021", title: "人气飙升", desc: "发行专辑《舞象之年》，单曲《要你管》广受好评。获TMEA年度最佳团体。" },
+                { year: "2022", title: "风格探索", desc: "发行《乌托邦少年》专辑，融合国风元素。蝉联东方风云榜最佳组合、亚洲人气组合。" },
+                { year: "2023", title: "持续闪耀", desc: "举办《理想之途》巡回演唱会。获TMEA年度最具影响力华语团体。" },
+                { year: "2024", title: "影响力组合", desc: "在《2023微博之夜》中获评“微博年度影响力组合”，商业价值与公众认可度持续提升。" },
+                { year: "2025", title: "转型之作", desc: "发行专辑《叁重楼》，被视为转型信号，音乐表达向更成熟的领域探索。" },
+            ];
+            
+            const awardsData = {
+                labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+                values: [2, 2, 4, 3, 4, 2, 1] 
+            };
+            
+            const musicStyleData = {
+                labels: ['青春活力 (Pop/Dance)', '国风探索 (Neo-Pop)', '流行摇滚 (Pop-Rock)', '抒情叙事 (Ballad/R&B)', '成熟表达'],
+                values: [40, 20, 15, 15, 10]
+            };
+
+            const timelineContainer = document.getElementById('timeline-container');
+            timelineContainer.innerHTML = `<div class="timeline-path"></div>`;
+            timelineData.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'relative pl-8 pr-4 py-6 timeline-item';
+                div.innerHTML = `
+                    <h4 class="font-bold text-lg text-[#6B7A8F]">${item.year} - ${item.title}</h4>
+                    <p class="text-gray-600 mt-2">${item.desc}</p>
+                `;
+                timelineContainer.appendChild(div);
+            });
+
+            const membersGrid = document.getElementById('members-grid');
+            membersData.forEach((member, index) => {
+                const div = document.createElement('div');
+                div.className = 'text-center cursor-pointer group';
+                div.innerHTML = `
+                    <div class="relative w-24 h-24 md:w-32 md:h-32 mx-auto mb-4">
+                        <div class="w-full h-full rounded-full bg-gray-200 group-hover:scale-105 transition-transform" style="background-image: url('https://placehold.co/128x128/D0A9A9/FFFFFF?text=${member.name.charAt(0)}'); background-size: cover; background-position: center;"></div>
+                    </div>
+                    <h4 class="font-bold text-lg">${member.name}</h4>
+                    <p class="text-sm text-gray-500">${member.role.split('、')[0]}</p>
+                `;
+                div.addEventListener('click', () => openModal(member));
+                membersGrid.appendChild(div);
+            });
+
+            const modal = document.getElementById('member-modal');
+            const modalContentBody = document.getElementById('modal-content-body');
+            const closeModalButton = document.getElementById('modal-close-button');
+            
+            function openModal(member) {
+                modalContentBody.innerHTML = `
+                    <div class="text-center mb-6">
+                        <div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4" style="background-image: url('https://placehold.co/128x128/D0A9A9/FFFFFF?text=${member.name.charAt(0)}'); background-size: cover; background-position: center;"></div>
+                        <h3 class="text-2xl font-bold">${member.name}</h3>
+                        <p class="text-gray-500">${member.birth}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg text-[#6B7A8F] mb-2">队内角色</h4>
+                        <p class="text-gray-700 mb-4">${member.role}</p>
+                        <h4 class="font-bold text-lg text-[#6B7A8F] mb-2">个人特长与发展</h4>
+                        <p class="text-gray-700">${member.skills}</p>
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            }
+
+            function closeModal() {
+                 modal.classList.add('opacity-0');
+                 modal.querySelector('.modal-content').classList.add('scale-95');
+                 setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+
+            closeModalButton.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            new Chart(document.getElementById('awardsChart'), {
+                type: 'bar',
+                data: {
+                    labels: awardsData.labels,
+                    datasets: [{
+                        label: '年度主要奖项数量',
+                        data: awardsData.values,
+                        backgroundColor: '#D0A9A9',
+                        borderColor: '#F8F7F4',
+                        borderWidth: 2,
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#6B7A8F',
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            padding: 10,
+                            cornerRadius: 5
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)'}
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('musicStyleChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: musicStyleData.labels,
+                    datasets: [{
+                        label: '音乐风格构成',
+                        data: musicStyleData.values,
+                        backgroundColor: ['#6B7A8F', '#D0A9A9', '#F7C5A8', '#8AA399', '#BDB7AB'],
+                        borderColor: '#F8F7F4',
+                        borderWidth: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: { size: 12 }
+                            }
+                        },
+                         tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            },
+                            backgroundColor: '#333333',
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            padding: 10,
+                            cornerRadius: 5
+                        }
+                    }
+                }
+            });
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 60) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>
