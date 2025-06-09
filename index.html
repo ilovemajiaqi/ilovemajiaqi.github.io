@@ -63,9 +63,78 @@
             width: 2px;
             background-color: #D0A9A9;
         }
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+        .welcome-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            margin: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: welcomeSlideIn 0.5s ease-out;
+        }
+        @keyframes welcomeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .welcome-button {
+            background: linear-gradient(135deg, #6B7A8F, #D0A9A9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 122, 143, 0.3);
+        }
+        .welcome-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 122, 143, 0.4);
+        }
     </style>
 </head>
 <body class="antialiased">
+
+    <!-- 欢迎弹窗 -->
+    <div id="welcome-modal" class="welcome-modal" style="display: none;">
+        <div class="welcome-content">
+            <h2 class="text-3xl font-bold text-[#6B7A8F] mb-4">🎵 欢迎光临 🎵</h2>
+            <p class="text-lg text-gray-600 mb-6">欢迎来到时代少年团全景报告！</p>
+            <p class="text-base text-gray-500 mb-8">点击下方按钮开始您的音乐之旅</p>
+            <button id="welcome-button" class="welcome-button">
+                ✨ 开始探索 ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- 背景音乐 -->
+    <audio id="background-music" loop preload="auto" autoplay>
+        <source src="https://music.163.com/song/media/outer/url?id=2130694661.mp3" type="audio/mpeg">
+        <source src="src\music.mp3" type="audio/mpeg">
+        <!-- 备用音频文件 -->
+        Your browser does not support the audio element.
+    </audio>
 
     <header id="header" class="bg-white/80 backdrop-blur-md sticky top-0 z-40 w-full shadow-sm">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -202,6 +271,113 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            
+            // 背景音乐控制
+            const backgroundMusic = document.getElementById('background-music');
+            const welcomeModal = document.getElementById('welcome-modal');
+            const welcomeButton = document.getElementById('welcome-button');
+            
+            let musicStarted = false;
+            
+            // 确保音乐循环播放
+            backgroundMusic.loop = true;
+            
+            // 尝试自动播放音乐
+            function attemptAutoPlay() {
+                backgroundMusic.play().then(() => {
+                    musicStarted = true;
+                    console.log('音乐自动播放成功');
+                    // 确保欢迎弹窗隐藏
+                    welcomeModal.style.display = 'none';
+                }).catch((error) => {
+                    console.log('自动播放被阻止，显示欢迎弹窗:', error);
+                    // 显示欢迎弹窗
+                    welcomeModal.style.display = 'flex';
+                    welcomeModal.style.opacity = '1';
+                });
+            }
+            
+            // 欢迎按钮点击事件
+            welcomeButton.addEventListener('click', () => {
+                // 尝试播放音乐
+                backgroundMusic.play().then(() => {
+                    musicStarted = true;
+                    welcomeModal.style.opacity = '0';
+                    welcomeModal.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        welcomeModal.style.display = 'none';
+                    }, 300);
+                }).catch((error) => {
+                    console.log('音乐播放失败:', error);
+                    welcomeModal.style.opacity = '0';
+                    setTimeout(() => {
+                        welcomeModal.style.display = 'none';
+                    }, 300);
+                });
+            });
+            
+            // 页面加载完成后立即尝试自动播放
+            setTimeout(attemptAutoPlay, 500);
+            
+            // 监听音频结束事件，强制重新播放（双重保险）
+            backgroundMusic.addEventListener('ended', () => {
+                console.log('音乐结束，重新开始播放');
+                backgroundMusic.currentTime = 0;
+                if (musicStarted) {
+                    backgroundMusic.play().catch((error) => {
+                        console.log('循环播放失败:', error);
+                        // 如果失败，再次尝试
+                        setTimeout(() => {
+                            backgroundMusic.play().catch(e => console.log('重试播放失败:', e));
+                        }, 1000);
+                    });
+                }
+            });
+            
+            backgroundMusic.addEventListener('pause', () => {
+                if (musicStarted) {
+                    console.log('检测到音乐暂停，立即恢复播放');
+                    setTimeout(() => {
+                        backgroundMusic.play().catch((error) => {
+                            console.log('恢复播放失败:', error);
+                        });
+                    }, 50);
+                }
+            });
+            
+            window.addEventListener('focus', () => {
+                if (musicStarted && backgroundMusic.paused) {
+                    backgroundMusic.play().catch((error) => {
+                        console.log('焦点恢复播放失败:', error);
+                    });
+                }
+            });
+            
+            window.addEventListener('blur', () => {
+                if (musicStarted && backgroundMusic.paused) {
+                    backgroundMusic.play().catch((error) => {
+                        console.log('失焦恢复播放失败:', error);
+                    });
+                }
+            });
+            
+            setInterval(() => {
+                if (musicStarted && backgroundMusic.paused) {
+                    console.log('定期检查：音乐已暂停，重新播放');
+                    backgroundMusic.play().catch((error) => {
+                        console.log('定期检查播放失败:', error);
+                    });
+                }
+            }, 5000);
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && e.target === document.body) {
+                    e.preventDefault();
+                }
+                if (['MediaPlay', 'MediaPause', 'MediaPlayPause', 'MediaStop'].includes(e.code)) {
+                    e.preventDefault();
+                }
+            });
             
             const membersData = [
                 { name: "马嘉祺", birth: "2002.12.12", role: "队长、主唱担当", skills: "擅长钢琴、吉他、架子鼓。曾参与《歌手2025》获好评，获华鼎奖“华语最具潜力歌手”。", image: "https://bkimg.cdn.bcebos.com/pic/8ad4b31c8701a18b87d68e4acc77100828381f305027?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080" },
