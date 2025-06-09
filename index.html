@@ -9,10 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Harmony -->
-    <!-- Application Structure Plan: A single-page, thematic structure with a sticky navigation bar for easy access to different facets of the group. The flow is designed to be non-linear, encouraging user exploration. It starts with a high-level introduction, then allows users to dive into an interactive timeline ("成长之旅"), detailed member profiles ("成员风采"), a musical analysis ("音乐宇宙"), and a balanced view of their achievements and challenges ("光辉与挑战"). This structure transforms the dense report into a digestible and engaging narrative, prioritizing user experience and interactive storytelling over a rigid, chapter-by-chapter format. The core '养成系' (growth) narrative is embodied in the interactive timeline. -->
-    <!-- Visualization & Content Choices: The report's data is visualized for impact and clarity. A timeline (HTML/CSS/JS) visualizes their growth. Interactive member cards (HTML/CSS/JS) replace static tables. A Chart.js bar chart dynamically displays their annual awards, summarizing a long list. A Chart.js doughnut chart visualizes their diverse musical styles. A two-column layout with icons presents their strengths and challenges. This selection focuses on interactivity (clicks, hovers) and clear information design to make complex information accessible and engaging, directly supporting the application's exploratory structure. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Noto Sans SC', sans-serif;
@@ -87,10 +83,10 @@
             </button>
         </nav>
         <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
-             <a href="#journey" class="block py-2 text-center nav-link">成长之旅</a>
-             <a href="#members" class="block py-2 text-center nav-link">成员风采</a>
-             <a href="#music" class="block py-2 text-center nav-link">音乐宇宙</a>
-             <a href="#impact" class="block py-2 text-center nav-link">光辉与挑战</a>
+              <a href="#journey" class="block py-2 text-center nav-link">成长之旅</a>
+              <a href="#members" class="block py-2 text-center nav-link">成员风采</a>
+              <a href="#music" class="block py-2 text-center nav-link">音乐宇宙</a>
+              <a href="#impact" class="block py-2 text-center nav-link">光辉与挑战</a>
         </div>
     </header>
 
@@ -209,13 +205,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             
             const membersData = [
-                { name: "马嘉祺", birth: "2002.12.12", role: "队长、主唱担当", skills: "擅长钢琴、吉他、架子鼓。曾参与《歌手2025》获好评，获华鼎奖“华语最具潜力歌手”。" },
-                { name: "丁程鑫", birth: "2002.02.24", role: "主舞担当、门面担当", skills: "TF家族早期练习生，综艺感强，常驻《你好，星期六》等节目，积累了广泛的国民度。" },
-                { name: "宋亚轩", birth: "2004.03.04", role: "主唱担当", skills: "嗓音清澈有辨识度，被赞“开口定调”。常驻《王牌对王牌》等热门综艺，展现可爱率真个性。" },
-                { name: "刘耀文", birth: "2005.09.23", role: "Rap担当、舞蹈担当", skills: "年龄最小的成员，台风稳健，舞台表现力强，在Rap和舞蹈方面成长迅速，潜力巨大。" },
-                { name: "张真源", birth: "2003.04.16", role: "Vocal担当", skills: "声线温柔有力。积极拓展戏剧领域，参演话剧《铁流东进》及音乐剧《家》等，磨练演技。" },
-                { name: "严浩翔", birth: "2004.08.16", role: "Rap担当", skills: "具备作词作曲及音乐制作能力。担任《中国新说唱2025》明星制作人，展现专业音乐才华。" },
-                { name: "贺峻霖", birth: "2004.06.15", role: "MC担当", skills: "主持及综艺反应能力突出，常在团体物料和外部活动中展现控场和互动能力，是团队的“气氛担当”。" }
+                { name: "马嘉祺", birth: "2002.12.12", role: "队长、主唱担当", skills: "擅长钢琴、吉他、架子鼓。曾参与《歌手2025》获好评，获华鼎奖“华语最具潜力歌手”。", image: "https://bkimg.cdn.bcebos.com/pic/8ad4b31c8701a18b87d68e4acc77100828381f305027?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080" },
+                { name: "丁程鑫", birth: "2002.02.24", role: "主舞担当、门面担当", skills: "TF家族早期练习生，综艺感强，常驻《你好，星期六》等节目，积累了广泛的国民度。", image: "https://bkimg.cdn.bcebos.com/pic/50da81cb39dbb6fd5266a77d4275bc18972bd4079915?x-bce-process=image/format,f_auto/quality,Q_70/resize,m_lfit,limit_1,h_570" },
+                { name: "宋亚轩", birth: "2004.03.04", role: "主唱担当", skills: "嗓音清澈有辨识度，被赞“开口定调”。常驻《王牌对王牌》等热门综艺，展现可爱率真个性。", image: "https://bkimg.cdn.bcebos.com/pic/bf096b63f6246b600c3354b3b7b30d4c510fd8f904ea?x-bce-process=image/format,f_auto/resize,m_lfit,limit_1,w_224" },
+                { name: "刘耀文", birth: "2005.09.23", role: "Rap担当、舞蹈担当", skills: "年龄最小的成员，台风稳健，舞台表现力强，在Rap和舞蹈方面成长迅速，潜力巨大。", image: "https://bkimg.cdn.bcebos.com/pic/7c1ed21b0ef41bd5ad6e3f918b8396cb39dbb6fd9706?x-bce-process=image/format,f_auto/quality,Q_70/resize,m_lfit,limit_1,w_536" },
+                { name: "张真源", birth: "2003.04.16", role: "Vocal担当", skills: "声线温柔有力。积极拓展戏剧领域，参演话剧《铁流东进》及音乐剧《家》等，磨练演技。", image: "https://bkimg.cdn.bcebos.com/pic/95eef01f3a292df5e0feb7cdec694b6034a85fdfd5e9?x-bce-process=image/format,f_auto/quality,Q_70/resize,m_lfit,limit_1,w_536" },
+                { name: "严浩翔", birth: "2004.08.16", role: "Rap担当", skills: "具备作词作曲及音乐制作能力。担任《中国新说唱2025》明星制作人，展现专业音乐才华。", image: "https://bkimg.cdn.bcebos.com/pic/a5c27d1ed21b0ef41bd5dd62969546da81cb39db90f4?x-bce-process=image/format,f_auto/quality,Q_70/resize,m_lfit,limit_1,h_570" },
+                { name: "贺峻霖", birth: "2004.06.15", role: "MC担当", skills: "主持及综艺反应能力突出，常在团体物料和外部活动中展现控场和互动能力，是团队的“气氛担当”。", image: "https://bkimg.cdn.bcebos.com/pic/4610b912c8fcc3cec3fde8200f13c188d43f87948ad0?x-bce-process=image/format,f_auto/quality,Q_70/resize,m_lfit,limit_1,w_536" }
             ];
 
             const timelineData = [
@@ -256,7 +252,7 @@
                 div.className = 'text-center cursor-pointer group';
                 div.innerHTML = `
                     <div class="relative w-24 h-24 md:w-32 md:h-32 mx-auto mb-4">
-                        <div class="w-full h-full rounded-full bg-gray-200 group-hover:scale-105 transition-transform" style="background-image: url('https://placehold.co/128x128/D0A9A9/FFFFFF?text=${member.name.charAt(0)}'); background-size: cover; background-position: center;"></div>
+                        <div class="w-full h-full rounded-full bg-gray-200 group-hover:scale-105 transition-transform bg-cover bg-center" style="background-image: url('${member.image}');"></div>
                     </div>
                     <h4 class="font-bold text-lg">${member.name}</h4>
                     <p class="text-sm text-gray-500">${member.role.split('、')[0]}</p>
@@ -272,7 +268,7 @@
             function openModal(member) {
                 modalContentBody.innerHTML = `
                     <div class="text-center mb-6">
-                        <div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4" style="background-image: url('https://placehold.co/128x128/D0A9A9/FFFFFF?text=${member.name.charAt(0)}'); background-size: cover; background-position: center;"></div>
+                        <div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 bg-cover bg-center" style="background-image: url('${member.image}');"></div>
                         <h3 class="text-2xl font-bold">${member.name}</h3>
                         <p class="text-gray-500">${member.birth}</p>
                     </div>
